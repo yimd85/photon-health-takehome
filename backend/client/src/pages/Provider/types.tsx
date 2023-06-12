@@ -11,18 +11,18 @@ export interface IPatients {
     __v?: number;
     _id?: string;
 }
- 
+
 
 export interface IPrescriptions {
-    prescription: string;
-    dispense: string;
-    providerName: string;
-    providerAddress: string;
-    providerNumber: number,
-    deaNumber: number,
-    patient: string;
-    prescriptionState: string;
+    prescription?: string;
+    dispense?: string;
+    providerName?: string;
+    providerAddress?: string;
+    providerNumber?: number,
+    deaNumber?: number,
+    patient?: string;
+    prescriptionState?: string;
+    deleted?: boolean;
     __v?: number;
     _id?: string;
 }
- 

@@ -5,28 +5,29 @@ import {
     Card,
 
     Icon,
-    Button
+    Button,
+    Select,
 } from '@chakra-ui/react';
-import './styles.css'
+
 import { FaTimesCircle, FaSave } from "react-icons/fa";
 import { useLocation, useNavigate } from 'react-router-dom';
-import { IPatients } from '../Provider/types';
+import { IPrescriptions } from '../Provider/types';
 import axios from 'axios';
 
 const AddEditPrescriptions = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [data, setData] = React.useState<IPatients>({})
+    const [data, setData] = React.useState<IPrescriptions>({})
 
     React.useEffect(() => {
         if (location.state) {
-            setData({ ...location.state, dob: new Date(location.state.dob).toISOString().substring(0, 10) })
+            setData({ ...location.state, prescriptionState: location.state.prescriptionState || 'pending' })
         }
 
     }, [])
 
     const handleOnClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
-        navigate(e.currentTarget.value)
+        navigate(e.currentTarget.value, { state: { _id: location.state.patient } })
     };
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -34,15 +35,15 @@ const AddEditPrescriptions = () => {
     };
 
     let isdisabled = true;
-    if (data.firstName && data.lastName && data.dob && data.phoneNumber) isdisabled = false;
+    if (data.prescription && data.dispense && data.providerName && data.providerNumber && data.deaNumber && data.prescriptionState) isdisabled = false;
 
     const savePrescriptions = () => {
-
+        console.log()
         if (isdisabled) return;
-        let url = `/api/prescription/${location.state.patient}`;
+        let url = `/api/prescription/${location.state.patient}/add`;
         let method = 'post'
-        if (location.state) {
-            url = `/api/cription//${location.state.patient}`;
+        if (location.state._id) {
+            url = `/api/prescription/${location.state.patient}/${location.state._id}/`;
             method = 'put'
         }
         axios({
@@ -53,7 +54,7 @@ const AddEditPrescriptions = () => {
                 ...data
             }
         }).then(() => {
-            navigate('/provider')
+            navigate('/prescriptions', { state: { _id: location.state.patient } })
         })
 
 
@@ -67,53 +68,79 @@ const AddEditPrescriptions = () => {
             <Card >
 
                 <div>
-                    <Text mt='10px' mb='5px'>First Name:  </Text>
+                    <Text mt='10px' mb='5px'>Provider Name:  </Text>
                     <Input
-                        name='firstName'
-                        value={data.firstName || ''}
+                        name='providerName'
+                        value={data.providerName || ''}
                         onChange={handleOnChange}
-                        placeholder='John'
+                        placeholder='John Smith'
                         size='lg'
                     />
                 </div>
                 <div>
-                    <Text mt='10px' mb='5px'>Last Name:  </Text>
+                    <Text mt='10px' mb='5px'>Provider Number:  </Text>
                     <Input
-                        name='lastName'
-                        value={data.lastName || ''}
+                        name='providerNumber'
+                        value={data.providerNumber || ''}
                         onChange={handleOnChange}
-                        placeholder='Smith'
+                        placeholder='9171234567'
                         size='lg'
                     />
                 </div>
                 <div>
-                    <Text mt='10px' mb='5px'>Date of Birth:  </Text>
+                    <Text mt='10px' mb='5px'>DEA #:  </Text>
                     <Input
-                        name='dob'
-                        value={data.dob || ''}
+                        name='deaNumber'
+                        value={data.deaNumber || ''}
                         onChange={handleOnChange}
+                        placeholder='1234'
+                        size='lg'
+                    />
+                </div>
+                <div>
+                    <Text mt='10px' mb='5px'>Prescription:  </Text>
+                    <Input
+                        name='prescription'
+                        value={data.prescription || ''}
+                        onChange={handleOnChange}
+                        placeholder='10mg acetaminophen'
+                        size='lg'
+                    />
+                </div>
+                <div>
+                    <Text mt='10px' mb='5px'>Dispense:  </Text>
+                    <Input
+                        name='dispense'
+                        value={data.dispense || ''}
+                        onChange={handleOnChange}
+                        placeholder='no refill'
+                        size='lg'
+                    />
+                </div>
 
-                        type='date'
-                        size='lg'
-                    />
-                </div>
                 <div>
-                    <Text mt='10px' mb='5px'>Phone Number:  </Text>
-                    <Input
-                        name='phoneNumber'
-                        value={data.phoneNumber || ''}
-                        onChange={handleOnChange}
-                        placeholder='9171231234'
-                        size='lg'
-                    />
-                </div>
+                    <Text mt='10px' mb='5px'>Prescription State:  </Text>
+                    <Select
+                        name='prescriptionState'
+                        value={data.prescriptionState || 'pending'}
+                        onChange={(e) => {
 
+                            setData({ ...data, prescriptionState: e.currentTarget.value })
+
+                        }}
+                        size='lg'
+                    >
+                        <option value='pending'>Pending</option>
+                        <option value='in progress'>In Progress</option>
+                        <option value='filled'>Filled</option>
+                    </Select>
+                </div>
 
                 <div className='patient-main__actions'>
                     <Button
                         backgroundColor='#d5b2ae'
                         _hover={{ color: '#d5b2ae', backgroundColor: '#273d52' }}
-                        value='/provider'
+                        value='/prescriptions'
                         onClick={handleOnClick}
                     >
                         <Icon as={FaTimesCircle} />
@@ -122,7 +149,7 @@ const AddEditPrescriptions = () => {
                         backgroundColor={isdisabled ? undefined : '#d5b2ae'}
                         _hover={isdisabled ? {} : { color: '#d5b2ae', backgroundColor: '#273d52' }}
                         disabled={isdisabled}
-                        onClick={savePatient}
+                        onClick={savePrescriptions}
                     >
                         <Icon as={FaSave} />
                     </Button>

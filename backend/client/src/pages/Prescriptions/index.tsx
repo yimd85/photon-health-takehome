@@ -22,29 +22,29 @@ const Prescriptions = () => {
     const [prescriptions, setPrescriptions] = React.useState<IPrescriptions[]>([]);
 
     React.useEffect(() => {
-console.log(location)
+        console.log(location)
         axios(`/api/prescription/${location.state._id}`).then(res => {
             setPrescriptions(res.data)
         });
     }, [])
 
     const navigate = useNavigate();
-    const handleOnClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
-        navigate(e.currentTarget.value)
-    };
+
 
     const handleDelete = (el: IPrescriptions) => {
         let data = {
             ...el,
             deleted: true
         }
+
+ 
         axios({
             method: 'put',
-            url: `/api/patient/${data._id}`,
+            url: `/api/prescription/${location.state.patient}/${data._id}`,
             data
         }).then(() => {
-            let updatePatients = prescriptions.filter(v => v._id !== data._id);
-            setPrescriptions(updatePatients)
+            let updatedPrescriptions = prescriptions.filter(v => v._id !== data._id);
+            setPrescriptions(updatedPrescriptions)
         });
 
     }
@@ -56,8 +56,15 @@ console.log(location)
                     backgroundColor='#d5b2ae'
                     _hover={{ color: '#d5b2ae', backgroundColor: '#273d52' }}
 
-                    value='patient'
-                    onClick={handleOnClick}
+                    value='update'
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>): void => {
+                        navigate(e.currentTarget.value, {
+                            state: {
+                                patient: location.state._id
+                            }
+                        })
+
+                    }}
                 >
                     <Icon as={FaPlusSquare} />
                 </Button>
@@ -87,12 +94,12 @@ console.log(location)
                                 <Td>
                                     <div className='provider-main__buttons'>
 
-                                       
+
                                         <Tooltip label='Edit Patient'>
                                             <Button
                                                 backgroundColor='#d5b2ae'
                                                 _hover={{ color: '#d5b2ae', backgroundColor: '#273d52' }}
-                                                value='patient'
+                                                value='update'
                                                 onClick={(e): void => {
                                                     navigate(e.currentTarget.value, { state: v })
                                                 }}

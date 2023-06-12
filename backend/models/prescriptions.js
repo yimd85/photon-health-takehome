@@ -11,6 +11,7 @@ const prescriptionsSchema = new mongoose.Schema({
     providerNumber: Number,
     deaNumber: Number,
     patient: String,
+    deleted: Boolean,
     prescriptionState: {
         type: String,
         enum: ['pending', 'in progress', 'filled'],
