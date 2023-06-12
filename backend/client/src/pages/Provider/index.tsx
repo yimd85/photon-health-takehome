@@ -12,13 +12,13 @@ import {
     Tooltip,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { IPatients } from './types';
+import { IPatients, IProvider } from './types';
 import { FaTrash, FaPen, FaPlusSquare, FaAddressBook } from "react-icons/fa";
 import './styles.css';
 import { useNavigate } from 'react-router-dom';
 
 
-const Provider = () => {
+const Provider = (props: IProvider) => {
     const [patients, setPatients] = React.useState<IPatients[]>([]);
 
     React.useEffect(() => {
@@ -27,12 +27,17 @@ const Provider = () => {
         });
     }, [])
 
+    const isdisabled = props.isPharmacist;
+
     const navigate = useNavigate();
     const handleOnClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
+        if (isdisabled) return;
         navigate(e.currentTarget.value)
     };
 
+
     const handleDelete = (el: IPatients) => {
+        if (isdisabled) return;
         let data = {
             ...el,
             deleted: true
@@ -45,16 +50,16 @@ const Provider = () => {
             let updatePatients = patients.filter(v => v._id !== data._id);
             setPatients(updatePatients)
         });
-
     }
+
     return (
         <div className='provider-main'>
             <Tooltip label='Add Patient'>
 
                 <Button
-                    backgroundColor='#d5b2ae'
-                    _hover={{ color: '#d5b2ae', backgroundColor: '#273d52' }}
-
+                    backgroundColor={props.isPharmacist ? undefined : '#d5b2ae'}
+                    _hover={props.isPharmacist ? {} : { color: '#d5b2ae', backgroundColor: '#273d52' }}
+                    disabled={props.isPharmacist}
                     value='patient'
                     onClick={handleOnClick}
                 >
@@ -89,7 +94,9 @@ const Provider = () => {
                                                 _hover={{ color: '#d5b2ae', backgroundColor: '#273d52' }}
                                                 value='prescriptions'
                                                 onClick={(e): void => {
-                                                    navigate(`/${e.currentTarget.value}`, { state: v })
+                                                    let nav = `/${e.currentTarget.value}`;
+                                                    if(props.isPharmacist) nav = `prescriptions`;
+                                                    navigate(nav, { state: v })
                                                 }}
                                             >
                                                 <Icon as={FaPlusSquare} />
@@ -97,10 +104,12 @@ const Provider = () => {
                                         </Tooltip>
                                         <Tooltip label='Edit Patient'>
                                             <Button
-                                                backgroundColor='#d5b2ae'
-                                                _hover={{ color: '#d5b2ae', backgroundColor: '#273d52' }}
+                                                backgroundColor={props.isPharmacist ? undefined : '#d5b2ae'}
+                                                _hover={props.isPharmacist ? {} : { color: '#d5b2ae', backgroundColor: '#273d52' }}
+                                                disabled={props.isPharmacist}
                                                 value='patient'
                                                 onClick={(e): void => {
+                                                    if (props.isPharmacist) return;
                                                     navigate(e.currentTarget.value, { state: v })
                                                 }}
                                             >
@@ -109,9 +118,9 @@ const Provider = () => {
                                         </Tooltip>
                                         <Tooltip label='Delete Patient'>
                                             <Button
-                                                backgroundColor='#d5b2ae'
-                                                _hover={{ color: '#d5b2ae', backgroundColor: '#273d52' }}
-
+                                                backgroundColor={props.isPharmacist ? undefined : '#d5b2ae'}
+                                                _hover={props.isPharmacist ? {} : { color: '#d5b2ae', backgroundColor: '#273d52' }}
+                                                disabled={props.isPharmacist}
                                                 value='pharmacist'
                                                 onClick={() => handleDelete(v)}
                                             >

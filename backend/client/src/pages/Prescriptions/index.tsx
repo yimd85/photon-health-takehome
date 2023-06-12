@@ -12,17 +12,16 @@ import {
     Tooltip,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { IPrescriptions } from '../Provider/types';
+import { IPrescriptions, IProvider } from '../Provider/types';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaTrash, FaPen, FaPlusSquare, FaAddressBook } from "react-icons/fa";
 
 
-const Prescriptions = () => {
+const Prescriptions = (props: IProvider) => {
     const location = useLocation();
     const [prescriptions, setPrescriptions] = React.useState<IPrescriptions[]>([]);
 
     React.useEffect(() => {
-        console.log(location)
         axios(`/api/prescription/${location.state._id}`).then(res => {
             setPrescriptions(res.data)
         });
@@ -37,7 +36,7 @@ const Prescriptions = () => {
             deleted: true
         }
 
- 
+
         axios({
             method: 'put',
             url: `/api/prescription/${location.state.patient}/${data._id}`,
@@ -48,16 +47,18 @@ const Prescriptions = () => {
         });
 
     }
+    console.log(props)
     return (
         <div className='provider-main'>
-            <Tooltip label='Add Patient'>
+            <Tooltip label='Add Prescription'>
 
                 <Button
-                    backgroundColor='#d5b2ae'
-                    _hover={{ color: '#d5b2ae', backgroundColor: '#273d52' }}
-
+                    backgroundColor={props.isPharmacist ? undefined : '#d5b2ae'}
+                    _hover={props.isPharmacist ? {} : { color: '#d5b2ae', backgroundColor: '#273d52' }}
+                    disabled={props.isPharmacist}
                     value='update'
                     onClick={(e: React.MouseEvent<HTMLButtonElement>): void => {
+                        if(props.isPharmacist) return;
                         navigate(e.currentTarget.value, {
                             state: {
                                 patient: location.state._id
@@ -95,25 +96,30 @@ const Prescriptions = () => {
                                     <div className='provider-main__buttons'>
 
 
-                                        <Tooltip label='Edit Patient'>
+                                        <Tooltip label='Edit Prescription'>
                                             <Button
                                                 backgroundColor='#d5b2ae'
                                                 _hover={{ color: '#d5b2ae', backgroundColor: '#273d52' }}
                                                 value='update'
                                                 onClick={(e): void => {
+                                                    
                                                     navigate(e.currentTarget.value, { state: v })
                                                 }}
                                             >
                                                 <Icon as={FaPen} />
                                             </Button>
                                         </Tooltip>
-                                        <Tooltip label='Delete Patient'>
+                                        <Tooltip label='Delete Prescription'>
                                             <Button
-                                                backgroundColor='#d5b2ae'
-                                                _hover={{ color: '#d5b2ae', backgroundColor: '#273d52' }}
+                                                backgroundColor={props.isPharmacist ? undefined : '#d5b2ae'}
+                                                _hover={props.isPharmacist ? {} : { color: '#d5b2ae', backgroundColor: '#273d52' }}
+                                                disabled={props.isPharmacist}
 
                                                 value='pharmacist'
-                                                onClick={() => handleDelete(v)}
+                                                onClick={() => {
+                                                    if(props.isPharmacist) return;
+                                                    handleDelete(v)
+                                                }}
                                             >
                                                 <Icon as={FaTrash} />
                                             </Button>

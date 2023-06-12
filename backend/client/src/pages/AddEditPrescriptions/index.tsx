@@ -11,10 +11,10 @@ import {
 
 import { FaTimesCircle, FaSave } from "react-icons/fa";
 import { useLocation, useNavigate } from 'react-router-dom';
-import { IPrescriptions } from '../Provider/types';
+import { IPrescriptions, IProvider } from '../Provider/types';
 import axios from 'axios';
 
-const AddEditPrescriptions = () => {
+const AddEditPrescriptions = (props: IProvider) => {
     const navigate = useNavigate();
     const location = useLocation();
     const [data, setData] = React.useState<IPrescriptions>({})
@@ -26,8 +26,11 @@ const AddEditPrescriptions = () => {
 
     }, [])
 
+
     const handleOnClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
-        navigate(e.currentTarget.value, { state: { _id: location.state.patient } })
+        let nav = e.currentTarget.value;
+        if (props.isPharmacist) nav = '/pharmacist/prescriptions';
+        navigate(nav, { state: { _id: location.state.patient } })
     };
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -38,7 +41,6 @@ const AddEditPrescriptions = () => {
     if (data.prescription && data.dispense && data.providerName && data.providerNumber && data.deaNumber && data.prescriptionState) isdisabled = false;
 
     const savePrescriptions = () => {
-        console.log()
         if (isdisabled) return;
         let url = `/api/prescription/${location.state.patient}/add`;
         let method = 'post'
@@ -54,19 +56,15 @@ const AddEditPrescriptions = () => {
                 ...data
             }
         }).then(() => {
+            let nav = '/prescriptions';
+            if (props.isPharmacist) nav = '/pharmacist/prescriptions';
             navigate('/prescriptions', { state: { _id: location.state.patient } })
         })
-
-
-
     }
-
-
 
     return (
         <div className='patient-main'>
             <Card >
-
                 <div>
                     <Text mt='10px' mb='5px'>Provider Name:  </Text>
                     <Input
@@ -75,6 +73,7 @@ const AddEditPrescriptions = () => {
                         onChange={handleOnChange}
                         placeholder='John Smith'
                         size='lg'
+                        disabled={props.isPharmacist}
                     />
                 </div>
                 <div>
@@ -85,6 +84,7 @@ const AddEditPrescriptions = () => {
                         onChange={handleOnChange}
                         placeholder='9171234567'
                         size='lg'
+                        disabled={props.isPharmacist}
                     />
                 </div>
                 <div>
@@ -95,6 +95,7 @@ const AddEditPrescriptions = () => {
                         onChange={handleOnChange}
                         placeholder='1234'
                         size='lg'
+                        disabled={props.isPharmacist}
                     />
                 </div>
                 <div>
@@ -105,6 +106,7 @@ const AddEditPrescriptions = () => {
                         onChange={handleOnChange}
                         placeholder='10mg acetaminophen'
                         size='lg'
+                        disabled={props.isPharmacist}
                     />
                 </div>
                 <div>
@@ -115,6 +117,7 @@ const AddEditPrescriptions = () => {
                         onChange={handleOnChange}
                         placeholder='no refill'
                         size='lg'
+                        disabled={props.isPharmacist}
                     />
                 </div>
 
@@ -129,6 +132,7 @@ const AddEditPrescriptions = () => {
 
                         }}
                         size='lg'
+
                     >
                         <option value='pending'>Pending</option>
                         <option value='in progress'>In Progress</option>

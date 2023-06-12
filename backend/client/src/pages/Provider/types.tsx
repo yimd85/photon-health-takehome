@@ -26,3 +26,8 @@ export interface IPrescriptions {
     __v?: number;
     _id?: string;
 }
+
+
+export interface IProvider {
+    isPharmacist?: boolean
+}

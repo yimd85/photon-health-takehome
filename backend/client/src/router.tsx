@@ -20,7 +20,9 @@ const router = createBrowserRouter(
             <Route path="/provider/patient" element={<AddEditPatient />} />
             <Route path="/prescriptions" element={<Prescriptions />} />
             <Route path="/prescriptions/update" element={<AddEditPrescriptions />} />
-
+            <Route path="/pharmacist" element={<Provider isPharmacist={true} />} />
+            <Route path="/pharmacist/prescriptions" element={<Prescriptions isPharmacist={true} />} />
+            <Route path="/pharmacist/prescriptions/update" element={<AddEditPrescriptions isPharmacist={true} />} />
         </Route>
 
     )
