@@ -1,0 +1,18 @@
+.patient-main{
+    display: flex;
+    
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+}
+
+.patient-main > div{
+   padding: 25px;
+}
+
+.patient-main__actions{
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    padding-top: 25px
+}

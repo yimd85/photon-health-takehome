@@ -1,0 +1,8 @@
+.provider-main{
+    padding: 20px;
+}
+
+.provider-main__buttons{
+    display: flex;
+    gap: 10px;
+}

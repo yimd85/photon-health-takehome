@@ -1,0 +1,36 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+
+.App {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #f7f4f4;
+}
+
+.header {
+    height: 75px;
+    padding: 0px 50px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+
+.main {
+    min-height: 200px;
+    overflow: auto;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.footer {
+    height: 40px;
+    border-top: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
